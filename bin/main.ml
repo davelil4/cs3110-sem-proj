@@ -15,10 +15,14 @@ let rec main_loop () =
       let price = float_of_string (read_line ()) in
       print_string "Enter Quantity: ";
       let quantity = int_of_string (read_line ()) in
-      add_order o_type price quantity;
+      print_endline o_type;
+      print_endline (string_of_int quantity);
+      print_endline (string_of_float price);
+      (*add_order o_type price quantity;*)
       main_loop ()
   | "2" ->
-      print_order_book ();
+      print_endline "print orderbook test";
+      (*print_order_book ();*)
       main_loop ()
   | "3" ->
       print_endline "Thank you for using the Order Book System!";
