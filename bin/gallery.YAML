@@ -1,0 +1,28 @@
+--- 
+#Members of our group
+group: 
+  - name: Jacob Mayourian
+    netid: jm2342
+  - name: David Lilienfeld
+    netid: dal342
+  - name: Ido Moriah 
+    netid: im285
+#Our PM: 
+pm: 
+  - name: Jiho Lee
+    netid: dck10
+publish: false
+# Pithy title
+title: "OCaml Order Book (OOB)"
+git-repo: "https://github.com/davelil4/cs3110-sem-proj"
+demo-video-url: ""
+desc: > 
+  This project simulates an order book as seen in stock exchanges. 
+  Users can send a “bid” (order to by) or an “offer” (order to sell) with the 
+  quantity and price they desire. The system will dynamically match bids and 
+  offers that cross (when bid price is >= to offer price). The order book will 
+  be sorted with most competitive offers at the top and users can view the 
+  current order book status with bids and offers. The system will also store a 
+  log of all trades that are executed. Users will be able to cancel or modify 
+  an order, and display the current book. 
+
