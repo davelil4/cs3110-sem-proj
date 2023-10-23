@@ -1,2 +1,2 @@
 (test
- (name order_book))
+ (name main))
