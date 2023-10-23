@@ -2,6 +2,9 @@
 
 module type OrderBook = sig
     
+    (** Type representing a user who would be putting in an order. *)
+    type user
+
     (** Type representing a single order. *)
     type order
 
@@ -23,7 +26,13 @@ module type OrderBook = sig
     (** Get the best ask order from the book. *)
     val best_ask: t -> order
 
-    (** Returns the list representation of the book *)
+    (** Gets the profit made from the trades of a single user. *)
+    val get_profit: t -> user -> int
+
+    (** Gets the loss made from the trades of a signle user *)
+    val get_loss: t -> user -> int
+
+    (** Returns the list representation of the book. *)
     val to_list: t -> order list
 
     (** Prints the order book *)
