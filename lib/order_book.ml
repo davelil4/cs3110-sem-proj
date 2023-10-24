@@ -16,18 +16,21 @@ type t = order list
 
 let empty = []
 
-let add_order book order = failwith("Unimplemented")
+let add_order book order = order :: book
 
-let remove_order book order = failwith("Unimplemented")
+let rec remove_order book order = 
+  match book with
+  | [] -> []
+  | h :: t -> if h = order then t else h :: (remove_order t order)
+  
+let best_bid = failwith("Unimplemented")
 
-let best_bid book = failwith("Unimplemented")
+let best_ask = failwith("Unimplemented")
 
-let best_ask book = failwith("Unimplemented")
+let get_profit = failwith("Unimplemented")
 
-let get_profit book user = failwith("Unimplemented")
+let get_loss = failwith("Unimplemented")
 
-let get_loss book user = failwith("Unimplemented")
+let to_list = failwith("Unimplemented")
 
-let to_list book = failwith("Unimplemented")
-
-let print_book book = failwith("Unimplemented")
+let print_book = failwith("Unimplemented")
