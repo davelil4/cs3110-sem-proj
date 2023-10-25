@@ -25,6 +25,8 @@ val add_order: t -> order -> t
 (** Removes an order to an order book. *)
 val remove_order: t -> order -> t
 
+(*
+
 (** Get the best bid order from the book. *)
 val best_bid: t -> order
 
@@ -36,6 +38,7 @@ val get_profit: t -> string -> int
 
 (** Gets the loss made from the trades of a signle user *)
 val get_loss: t -> string -> int
+*)
 
 (** Returns the list representation of the book. *)
 val to_list: t -> order list
