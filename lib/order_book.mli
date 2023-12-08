@@ -20,7 +20,7 @@ type t
 type users
 (** Type respresenting all of the users. *)
 
-val empty : t
+val empty : t * users
 (** Creates an empty order book. *)
 
 val add_order : t -> users -> order -> (t * users)
