@@ -1,2 +1,3 @@
 (test
- (name main))
+ (name main)
+ (libraries ounit2 order_book))
