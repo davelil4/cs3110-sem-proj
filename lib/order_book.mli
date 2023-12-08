@@ -2,7 +2,7 @@ type o_type =
   | B
   | S  (** Type represensting if the order is being bought or sold. *)
 
-type asset = string * o_type
+type asset = string
 (** Type representing what the asset in the order is. *)
 
 type order = {
@@ -23,10 +23,10 @@ type users
 val empty : t
 (** Creates an empty order book. *)
 
-val add_order : t -> order -> t
+val add_order : t -> users -> order -> (t * users)
 (** Adds an order to an order book. *)
 
-val remove_order : t -> order -> t
+val remove_order : t -> users -> order -> (t * users)
 (** Removes an order to an order book. *)
 
 val best_bid : t -> asset -> order
