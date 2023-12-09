@@ -31,8 +31,8 @@ let rec main_loop (book : t * users) =
       let price1 = int_of_string (read_line ()) in
       print_string "Enter Quantity: ";
       let quantity1 = int_of_string (read_line ()) in
-      let current_book = match book with b, u -> b in
-      let current_users = match book with b, u -> u in
+      let current_book = match book with b, _ -> b in
+      let current_users = match book with _, u -> u in
       let new_book =
         match
           add_order current_book current_users
@@ -44,7 +44,7 @@ let rec main_loop (book : t * users) =
               user = user1;
             }
         with
-        | b, u -> b
+        | b, _ -> b
       in
       let new_users =
         match
@@ -57,7 +57,7 @@ let rec main_loop (book : t * users) =
               user = user1;
             }
         with
-        | b, u -> u
+        | _, u -> u
       in
       main_loop (new_book, new_users)
   | "2" ->
@@ -70,8 +70,8 @@ let rec main_loop (book : t * users) =
       let price1 = int_of_string (read_line ()) in
       print_string "Enter Quantity: ";
       let quantity1 = int_of_string (read_line ()) in
-      let current_book = match book with b, u -> b in
-      let current_users = match book with b, u -> u in
+      let current_book = match book with b, _ -> b in
+      let current_users = match book with _, u -> u in
       let new_book =
         match
           remove_order current_book current_users
@@ -83,7 +83,7 @@ let rec main_loop (book : t * users) =
               user = user1;
             }
         with
-        | b, u -> b
+        | b, _ -> b
       in
       let new_users =
         match
@@ -96,7 +96,7 @@ let rec main_loop (book : t * users) =
               user = user1;
             }
         with
-        | b, u -> u
+        | _, u -> u
       in
       main_loop (new_book, new_users)
   | "3" -> print_market_book current_book

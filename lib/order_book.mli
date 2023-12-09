@@ -23,7 +23,7 @@ type user = {
   pending_orders : t;
   profit : int;
 }
-(** Type representing a single user*)
+(** Type representing a single user. *)
 
 type users
 (** Type respresenting all of the users. *)
@@ -37,10 +37,10 @@ val add_order : t -> users -> order -> t * users
 val remove_order : t -> users -> order -> t * users
 (** Removes an order to an order book. *)
 
-val best_bid : t -> asset -> order
+val best_bid : t -> asset -> order option
 (** Get the best bid order from the book. *)
 
-val best_ask : t -> asset -> order
+val best_ask : t -> asset -> order option
 (** Get the best ask order from the book. *)
 
 val get_profit : users -> string -> int
@@ -61,7 +61,7 @@ val print_market_book : t -> unit
 val print_asset_book : t -> asset -> string -> unit
 (** Prints a single assets order book. *)
 
-val find_user : string -> users -> user
+val find_user : string -> users -> user option
 (** Returns a speicifc users orders*)
 
 val print_profile : user -> unit

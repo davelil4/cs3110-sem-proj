@@ -1,8 +1,10 @@
+type asset = string
+
 type o_type = B | S
 
 type order = {
   o_type : o_type;
-  asset : string;
+  asset : asset;
   price : int;
   quantity : int;
   user : string;
@@ -24,8 +26,38 @@ type user = {
 
 type users = user StringMap.t
 
-let rec sort_book b = List.sort compare_order_asc b
-and compare_order_asc o1 o2 = compare o1.price o2.price
+
+
+
+let get_profit = failwith "Unimplemented"
+
+let get_loss = failwith "Unimplemented"
+
+let print_asset_book = failwith "Unimplemented"
+
+let print_market_book = failwith "Unimplemented"
+
+let orderbook_to_list = failwith "Unimplemented"
+
+let marketorders_to_list = failwith "Unimplemented"
+
+
+let best_bid asset_map asset_name =
+  match StringMap.find_opt asset_name asset_map with
+  | None -> None
+  (*Assume b is sorted *)
+  | Some {buy; _} -> ( match buy with h :: _ -> Some h | _ -> None)
+
+let best_ask asset_map asset_name =
+  match StringMap.find_opt asset_name asset_map with
+  | None -> None
+  (*Assume s is sorted *)
+  | Some { buy=_; sell } -> ( match sell with h :: _ -> Some h | _ -> None)
+
+
+let rec sort_book b = (List.sort compare_order_asc b)
+and compare_order_asc o1 o2 = 
+  compare o1.price o2.price
 
 let empty = (StringMap.empty, StringMap.empty)
 
@@ -68,6 +100,10 @@ let rec add_order book users order =
   let new_users = add_to_users users order in
   let bb = (best_bid new_book order.asset) in
   let ba = (best_ask new_book order.asset) in
+  match bb, ba with
+  | None, _
+  | _, None -> (new_book, new_users)
+  | Some bb, Some ba -> 
     if bb.price > ba.price
       then 
         let b1, u1 = (remove_from_book new_book order, remove_from_user_pending new_users bb) in
@@ -76,7 +112,6 @@ let rec add_order book users order =
     else
       (new_book, new_users)
 
-  
   
 and add_to_book book order = 
   match StringMap.find_opt order.asset book with
@@ -118,19 +153,24 @@ and add_profit users un v =
 let to_list book = book
 let string_order_type ot = match ot with B -> "Buy" | S -> "Sell"
 
+let find_user user users =
+  match StringMap.find_opt user users with None -> None | Some u -> Some u
+
 let print_order o =
   Printf.printf
     "\n Order Type: %s, \nAsset: %s, \nPrice: %d, \nQuantity: %d, \nUser: %s\n"
     (string_order_type o.o_type)
     o.asset o.price o.quantity o.user
 
-let rec print_book (book : order list) =
-  match book with
+let rec print_book _ = failwith "Unimplemented"
+  
+  
+  (* match book with
   | [] -> Printf.printf "\n Emtpy Order Book \n"
   | h :: [] -> print_order h
   | h :: t ->
       print_order h;
       print_endline "--------------";
-      print_book t
+      print_book t *)
 
-let print_profile u = Printf.printf ""
+let print_profile _ = failwith "Unimplemented"
