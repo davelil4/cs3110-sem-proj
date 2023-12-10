@@ -6,7 +6,21 @@ module StringMap = Map.Make (String)
      This test suite aims to validate the correctness of the order
      book system.  It includes aset of tests covering various
      functionalities like adding and removing orders, finding the best bid and
-     ask prices, handling multiple assets and users, etc.
+     ask prices, handling multiple assets and users, etc. Tests were developed
+     using a combination of black box and glass box testing.
+
+     Black box example:
+     test_add_order_to_empty checks whether adding an order to an
+     empty book results in that order being the only one in the book.
+     This test does not care how the order is added; it only checks the end result.
+
+     Glass box example :
+     Tests like test_add_and_remove_multiple_orders and
+     test_marketorders_to_list_after_additions that verify the internal state
+     of the order book after performing a series of additions and deletions are
+     examples of glass box testing. They check the structure of the order book
+     after operations, which requires knowledge of how the order book is implemented.
+
 
     What's Tested:
        --------------
@@ -36,6 +50,8 @@ module StringMap = Map.Make (String)
     8. Complexity Scenarios: Complex test cases involving multiple orders,
     users, and assets are included to simulate real-world scenarios and ensure
     the system can handle them efficiently.
+
+
 
       Omissions:
       ----------
