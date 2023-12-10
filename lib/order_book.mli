@@ -58,7 +58,7 @@ val marketorders_to_list : t -> order list
 val print_market_book : t -> unit
 (** Prints the order book. *)
 
-val print_asset_book : t -> asset -> string -> unit
+val asset_book_to_string : t -> asset -> string -> string
 (** Prints a single assets order book. *)
 
 val find_user : string -> users -> user option
@@ -67,26 +67,30 @@ val find_user : string -> users -> user option
 val print_profile : user -> unit
 (** Prints a users profile *)
 
-val get_top_profiter : users -> (string * int)
-
-val get_top_3_profiters: users -> (string * int) list
-
-val get_top_loss : users -> (string * int)
-
-val get_top_3_loss: users -> (string * int) list
-
-val get_top_orderer : users -> (string * int)
-
-val get_top_3_orderers: users -> (string * int) list
-
-val get_bottom_orderer : users -> (string * int)
-
-val get_bottom_3_orderers: users -> (string * int) list
-
-val get_most_pending_orders : users -> (string * int)
-
+val get_top_profiter : users -> string * int
+val get_top_3_profiters : users -> (string * int) list
+val get_top_loss : users -> string * int
+val get_top_3_loss : users -> (string * int) list
+val get_top_orderer : users -> string * int
+val get_top_3_orderers : users -> (string * int) list
+val get_bottom_orderer : users -> string * int
+val get_bottom_3_orderers : users -> (string * int) list
+val get_most_pending_orders : users -> string * int
 val get_top_3_nr_pending_orders : users -> (string * int) list
-
-val get_least_pending_orders : users -> (string * int)
-
+val get_least_pending_orders : users -> string * int
 val get_bottom_3_nr_pending_orders : users -> (string * int) list
+
+val t_to_string : t -> string
+(**Converts an orderbook of type t to a string representation*)
+
+val user_to_string : user -> string
+(**Creates a string representation of a user*)
+
+val users_to_string : users -> string
+(**Public string representation of all usernames, not outputting any private information*)
+
+val available_buys : t -> string
+(**Creates a list of the available assets to buy*)
+
+val order_to_string : order -> string
+(**Creates a string representation of an order*)
