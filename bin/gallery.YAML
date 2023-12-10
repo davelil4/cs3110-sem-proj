@@ -20,9 +20,10 @@ desc: >
   This project simulates an order book as seen in stock exchanges. 
   Users can send a “bid” (order to by) or an “offer” (order to sell) with the 
   quantity and price they desire. The system will dynamically match bids and 
-  offers that cross (when bid price is >= to offer price). The order book will 
-  be sorted with most competitive offers at the top and users can view the 
-  current order book status with bids and offers. The system will also store a 
-  log of all trades that are executed. Users will be able to cancel or modify 
-  an order, and display the current book. 
+  offers that cross (when bid price is >= to offer price) for the desired 
+  quantity. The order book will be sorted with most competitive offers 
+  at the top and users can view the current order book status with bids and 
+  offers, as well as a public leadship board for different statistics. 
+  The system will also store a log of all trades that are executed. 
+  Users will be able to cancel or modify an order, and display the current book. 
 
