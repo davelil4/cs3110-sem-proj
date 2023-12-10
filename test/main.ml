@@ -18,15 +18,16 @@ let empty_book, empty_users = Order_book.empty
 (********************************Empty Test***********************************)
 let test_empty _ =
   let asset = "AAPL" in
-  let user_id = "user123" in
-  let orders = orderbook_to_list empty_book asset user_id in
-  assert_equal [] orders ~printer:string_of_order_list
+  let orders_buy = orderbook_to_list empty_book asset B in
+  let orders_sell = orderbook_to_list empty_book asset S in
+  assert_equal [] orders_buy ~printer:string_of_order_list;
+  assert_equal [] orders_sell ~printer:string_of_order_list
 
 (********************************Add_order Test***********************************)
 let test_add_order_to_empty _ =
   let new_order = make_order B "AAPL" 100 10 "Alice" in
   let updated_book, _ = add_order empty_book empty_users new_order in
-  let orders = orderbook_to_list updated_book "AAPL" "Alice" in
+  let orders = orderbook_to_list updated_book "AAPL" B in
   assert_equal [ new_order ] orders ~printer:string_of_order_list
 
 let test_add_existing_order _ =
@@ -37,7 +38,7 @@ let test_add_existing_order _ =
   let book_with_duplicate, _ =
     add_order book_with_order users_with_order order
   in
-  let orders = orderbook_to_list book_with_duplicate "AAPL" "Alice" in
+  let orders = orderbook_to_list book_with_duplicate "AAPL" B in
   assert_equal [ order; order ] orders ~printer:string_of_order_list
 
 let test_add_orders_different_assets _ =
@@ -48,8 +49,8 @@ let test_add_orders_different_assets _ =
       (fun (book, users) order -> add_order book users order)
       (empty_book, empty_users) [ aapl_order; goog_order ]
   in
-  let aapl_orders = orderbook_to_list book_with_orders "AAPL" "Alice" in
-  let goog_orders = orderbook_to_list book_with_orders "GOOG" "Bob" in
+  let aapl_orders = orderbook_to_list book_with_orders "AAPL" B in
+  let goog_orders = orderbook_to_list book_with_orders "GOOG" B in
   assert_equal [ aapl_order ] aapl_orders ~printer:string_of_order_list;
   assert_equal [ goog_order ] goog_orders ~printer:string_of_order_list
 
@@ -66,7 +67,7 @@ let test_add_multiple_orders_same_asset_user _ =
       (fun (book, users) order -> add_order book users order)
       (empty_book, empty_users) orders
   in
-  let retrieved_orders = orderbook_to_list book_with_orders "AAPL" "Alice" in
+  let retrieved_orders = orderbook_to_list book_with_orders "AAPL" B in
   assert_equal orders retrieved_orders ~printer:string_of_order_list
 
 let test_add_orders_different_prices _ =
@@ -82,7 +83,7 @@ let test_add_orders_different_prices _ =
       (fun (book, users) order -> add_order book users order)
       (empty_book, empty_users) orders
   in
-  let retrieved_orders = orderbook_to_list book_with_orders "AAPL" "Alice" in
+  let retrieved_orders = orderbook_to_list book_with_orders "AAPL" B in
   assert_bool "Contains orders with different prices"
     (List.for_all (fun order -> List.mem order retrieved_orders) orders)
 
@@ -95,21 +96,21 @@ let test_add_orders_same_asset_different_users _ =
       (fun (book, users) order -> add_order book users order)
       (empty_book, empty_users) orders
   in
-  let alice_orders = orderbook_to_list book_with_orders "AAPL" "Alice" in
-  let bob_orders = orderbook_to_list book_with_orders "AAPL" "Bob" in
+  let alice_orders = orderbook_to_list book_with_orders "AAPL" B in
+  let bob_orders = orderbook_to_list book_with_orders "AAPL" B in
   assert_equal [ List.hd orders ] alice_orders ~printer:string_of_order_list;
   assert_equal [ List.nth orders 1 ] bob_orders ~printer:string_of_order_list
 
 let test_add_order_negative_price _ =
   let order = make_order B "AAPL" (-100) 10 "Alice" in
   let book_with_order, _ = add_order empty_book empty_users order in
-  let orders = orderbook_to_list book_with_order "AAPL" "Alice" in
+  let orders = orderbook_to_list book_with_order "AAPL" B in
   assert_equal [] orders ~printer:string_of_order_list
 
 let test_add_order_zero_quantity _ =
   let order = make_order B "AAPL" 100 0 "Alice" in
   let book_with_order, _ = add_order empty_book empty_users order in
-  let orders = orderbook_to_list book_with_order "AAPL" "Alice" in
+  let orders = orderbook_to_list book_with_order "AAPL" B in
   assert_equal [] orders ~printer:string_of_order_list
 
 let test_add_and_remove_multiple_orders _ =
@@ -142,20 +143,16 @@ let test_remove_order_from_multiple _ =
   let updated_book, _ =
     remove_order book_with_orders users_with_orders order1
   in
-  let orders = orderbook_to_list updated_book "AAPL" "Alice" in
-  assert_equal [ order2 ] orders ~printer:string_of_order_list
-
-let test_remove_nonexistent_order _ =
-  let order = make_order B "AAPL" 100 10 "Alice" in
-  let updated_book, _ = remove_order empty_book empty_users order in
-  let orders = orderbook_to_list updated_book "AAPL" "Alice" in
-  assert_equal [] orders ~printer:string_of_order_list
+  let alice_orders = orderbook_to_list updated_book "AAPL" B in
+  let bob_orders = orderbook_to_list updated_book "AAPL" B in
+  assert_equal [] alice_orders ~printer:string_of_order_list;
+  assert_equal [ order2 ] bob_orders ~printer:string_of_order_list
 
 let test_remove_recently_added_order _ =
   let order = make_order B "AAPL" 100 10 "Alice" in
   let book_with_order, _ = add_order empty_book empty_users order in
   let updated_book, _ = remove_order book_with_order empty_users order in
-  let orders = orderbook_to_list updated_book "AAPL" "Alice" in
+  let orders = orderbook_to_list updated_book "AAPL" B in
   assert_equal [] orders ~printer:string_of_order_list
 
 let test_remove_single_order _ =
@@ -165,10 +162,10 @@ let test_remove_single_order _ =
   assert_bool "Book should be empty after removing the only order"
     (marketorders_to_list updated_book = [])
 
-let test_remove_non_existent_order _ =
+let test_remove_nonexistent_order _ =
   let order = make_order B "AAPL" 100 10 "Alice" in
   let updated_book, _ = remove_order empty_book empty_users order in
-  let orders = orderbook_to_list updated_book "AAPL" "Alice" in
+  let orders = orderbook_to_list updated_book "AAPL" B in
   assert_equal [] orders ~printer:string_of_order_list
 
 let test_remove_order_from_empty_book _ =
@@ -335,8 +332,10 @@ let test_marketorders_to_list_after_removals _ =
   assert_equal [ order2 ] market_orders ~printer:string_of_order_list
 
 let test_orderbook_to_list_empty_book _ =
-  assert_bool "No orders should be present in an empty book"
-    (orderbook_to_list empty_book "AAPL" "Alice" = [])
+  let empty_buy_orders = orderbook_to_list empty_book "AAPL" B in
+  let empty_sell_orders = orderbook_to_list empty_book "AAPL" S in
+  assert_equal [] empty_buy_orders ~printer:string_of_order_list;
+  assert_equal [] empty_sell_orders ~printer:string_of_order_list
 
 let test_marketorders_to_list_empty_book _ =
   assert_bool "No market orders should be present in an empty book"
@@ -417,9 +416,9 @@ let test_find_user_complex_case _ =
   | Some user ->
       assert_equal "Alice" user.username;
       assert_equal 3
-        (List.length (orderbook_to_list user.order_history "AAPL" "Alice")
-        + List.length (orderbook_to_list user.order_history "GOOG" "Alice")
-        + List.length (orderbook_to_list user.order_history "MSFT" "Alice"))
+        (List.length (orderbook_to_list user.order_history "AAPL" B)
+        + List.length (orderbook_to_list user.order_history "GOOG" S)
+        + List.length (orderbook_to_list user.order_history "MSFT" B))
   | None -> failwith "Expected user Alice with multiple orders to be found"
 
 (***************************get_top_profiter tests****************************)
@@ -455,7 +454,6 @@ let suite =
          >:: test_best_ask_with_no_sell_orders;
          "test_add_order_negative_price" >:: test_add_order_negative_price;
          "test_add_order_zero_quantity" >:: test_add_order_zero_quantity;
-         "test_remove_non_existent_order" >:: test_remove_non_existent_order;
          "test_remove_order_from_empty_book"
          >:: test_remove_order_from_empty_book;
          "test_view_profile_non_existent_user"
@@ -469,6 +467,16 @@ let suite =
          >:: test_find_user_with_multiple_users;
          "test_find_user_case_sensitivity" >:: test_find_user_case_sensitivity;
          "test_find_user_complex_case" >:: test_find_user_complex_case;
+         "test_best_ask_multiple_orders " >:: test_best_ask_multiple_orders;
+         "test_best_ask_same_price_different_quantities"
+         >:: test_best_ask_same_price_different_quantities;
+         "test_best_ask_different_assets" >:: test_best_ask_different_assets;
+         "test_best_ask_same_price_different_quantities"
+         >:: test_best_ask_same_price_different_quantities;
+         "test_best_bid_different_assets" >:: test_best_bid_different_assets;
+         "test_best_bid_same_price_different_quantities"
+         >:: test_best_bid_same_price_different_quantities;
+         "test_best_bid_multiple_orders" >:: test_best_bid_multiple_orders;
        ]
 
 let _ = run_test_tt_main suite
