@@ -32,7 +32,8 @@ let rec main_loop (book : t * users) : unit =
   print_endline "9. View Pending Orders";
   print_endline "10. View Profit";
   print_endline "11. View Users";
-  print_endline "12. Exit";
+  print_endline "12. View Trade Leaderboard";
+  print_endline "13. Exit";
   print_endline "=================================";
   print_string "Enter your choice: ";
   let choice = read_line () in
@@ -54,9 +55,9 @@ let rec main_loop (book : t * users) : unit =
         if inp1 >= 0 then inp1 else raise (Invalid_argument "Negative Price")
       in
       print_string "Enter Quantity: ";
+      let inp2 = int_of_string (read_line ()) in
       let quantity1 =
-        if int_of_string (read_line ()) >= 0 then int_of_string (read_line ())
-        else raise (Invalid_argument "Negative Quantity")
+        if inp2 >= 0 then inp2 else raise (Invalid_argument "Negative Quantity")
       in
       let current_book = match book with b, _ -> b in
       let current_users = match book with _, u -> u in
@@ -114,14 +115,14 @@ let rec main_loop (book : t * users) : unit =
       let asset1 = read_line () in
       let user1 = name in
       print_string "Enter Price: ";
+      let inp3 = int_of_string (read_line ()) in
       let price1 =
-        if int_of_string (read_line ()) >= 0 then int_of_string (read_line ())
-        else raise (Invalid_argument "Negative Price")
+        if inp3 >= 0 then inp3 else raise (Invalid_argument "Negative Price")
       in
       print_string "Enter Quantity: ";
+      let inp4 = int_of_string (read_line ()) in
       let quantity1 =
-        if int_of_string (read_line ()) >= 0 then int_of_string (read_line ())
-        else raise (Invalid_argument "Negative Quantity")
+        if inp4 >= 0 then inp4 else raise (Invalid_argument "Negative Quantity")
       in
       let o =
         {
@@ -167,30 +168,123 @@ let rec main_loop (book : t * users) : unit =
           | _, u -> u
         in
         main_loop (new_book, new_users)
-  | "3" -> print_endline (available_buys current_book)
-  | "4" -> print_endline (t_to_string current_book)
+  | "3" ->
+      print_endline (available_buys current_book);
+      main_loop (current_book, current_users)
+  | "4" ->
+      print_endline (t_to_string current_book);
+      main_loop (current_book, current_users)
   | "5" ->
       print_endline "Which Asset are you looking for?";
       let desired_asset = read_line () in
       print_endline "Buy or Sell Order?";
       let bs = read_line () in
-      print_endline (asset_book_to_string current_book desired_asset bs)
-  | "6" -> print_endline (user_to_string user_profile)
-  | "7" -> print_endline name
+      print_endline (asset_book_to_string current_book desired_asset bs);
+      main_loop (current_book, current_users)
+  | "6" ->
+      print_endline (user_to_string user_profile);
+      main_loop (current_book, current_users)
+  | "7" ->
+      print_endline name;
+      main_loop (current_book, current_users)
   | "8" -> (
       match find_user name current_users with
-      | None -> print_endline ""
-      | Some us -> print_endline (t_to_string us.order_history))
+      | None -> raise (Invalid_argument "User not found")
+      | Some us ->
+          print_endline (t_to_string us.order_history);
+          main_loop (current_book, current_users))
   | "9" -> (
       match find_user name current_users with
-      | None -> print_endline ""
-      | Some us -> print_endline (t_to_string us.pending_orders))
+      | None -> raise (Invalid_argument "User not found")
+      | Some us ->
+          print_endline (t_to_string us.pending_orders);
+          main_loop (current_book, current_users))
   | "10" -> (
       match find_user name current_users with
-      | None -> print_endline ""
-      | Some us -> print_endline (string_of_int us.profit))
-  | "11" -> print_endline (users_to_string current_users)
-  | "12" ->
+      | None -> raise (Invalid_argument "User not found")
+      | Some us ->
+          print_endline (string_of_int us.profit);
+          main_loop (current_book, current_users))
+  | "11" ->
+      print_endline (users_to_string current_users);
+      main_loop (current_book, current_users)
+  | "12" -> (
+      print_endline "Which of the following stats would you like to see: ";
+      print_endline "Top Profiter";
+      print_endline "Top Three Profiters";
+      print_endline "Top Loss";
+      print_endline "Top Three Loss";
+      print_endline "Top Orderer";
+      print_endline "Top Three Orderers";
+      print_endline "Bottom Orderer";
+      print_endline "Bottom Three Orderers";
+      print_endline "Top Pending Orders";
+      print_endline "Top Three Pending Orders";
+      print_endline "Bottom Pending Orders";
+      print_endline "Bottom Three Pending Orders";
+      let choice = read_line () in
+      match choice with
+      | "Top Profiter" ->
+          print_endline (fst (get_top_profiter current_users));
+          main_loop (current_book, current_users)
+      | "Top Three Profiters" ->
+          let lis = get_top_3_profiters current_users in
+          let str =
+            match lis with [ a; b; c ] -> fst a ^ fst b ^ fst c | _ -> ""
+          in
+          print_endline str;
+          main_loop (current_book, current_users)
+      | "Top Loss" ->
+          print_endline (fst (get_top_loss current_users));
+          main_loop (current_book, current_users)
+      | "Top Orderer" ->
+          print_endline (fst (get_top_orderer current_users));
+          main_loop (current_book, current_users)
+      | "Top Pending Orders" ->
+          print_endline (fst (get_most_pending_orders current_users));
+          main_loop (current_book, current_users)
+      | "Bottom Pending Orders" ->
+          print_endline (fst (get_bottom_orderer current_users));
+          main_loop (current_book, current_users)
+      | "Top Three Loss" ->
+          let lis = get_top_3_loss current_users in
+          let str =
+            match lis with [ a; b; c ] -> fst a ^ fst b ^ fst c | _ -> ""
+          in
+          print_endline str;
+          main_loop (current_book, current_users)
+      | "Top Three Orderers" ->
+          let lis = get_top_3_orderers current_users in
+          let str =
+            match lis with [ a; b; c ] -> fst a ^ fst b ^ fst c | _ -> ""
+          in
+          print_endline str;
+          main_loop (current_book, current_users)
+      | "Bottom Three Orderers" ->
+          let lis = get_bottom_3_orderers current_users in
+          let str =
+            match lis with [ a; b; c ] -> fst a ^ fst b ^ fst c | _ -> ""
+          in
+          print_endline str;
+          main_loop (current_book, current_users)
+      | "Top Three Pending Orders" ->
+          let lis = get_top_3_nr_pending_orders current_users in
+          let str =
+            match lis with [ a; b; c ] -> fst a ^ fst b ^ fst c | _ -> ""
+          in
+          print_endline str;
+          main_loop (current_book, current_users)
+      | "Bottom Three Pending Orders" ->
+          let lis = get_bottom_3_nr_pending_orders current_users in
+          let str =
+            match lis with [ a; b; c ] -> fst a ^ fst b ^ fst c | _ -> ""
+          in
+          print_endline str;
+          main_loop (current_book, current_users)
+      | _ ->
+          print_endline "";
+          main_loop (current_book, current_users))
+  | "13" ->
       print_endline "Thank you for using the Order Book System!";
       exit 0
   | _ ->

@@ -269,11 +269,11 @@ and add_to_book book order =
       match order.o_type with
       | B ->
           StringMap.add order.asset
-            { buy = sort_book (order :: buy); sell }
+            { buy = sort_book (order :: buy) |> List.rev; sell }
             book
       | S ->
           StringMap.add order.asset
-            { buy; sell = List.rev (sort_book (order :: sell)) }
+            { buy; sell = sort_book (order :: sell) }
             book)
   | None -> (
       match order.o_type with
