@@ -2,6 +2,68 @@ open OUnit2
 open Order_book
 module StringMap = Map.Make (String)
 
+(* Testing Strategy:
+     This test suite aims to validate the correctness of the order
+     book system.  It includes aset of tests covering various
+     functionalities like adding and removing orders, finding the best bid and
+     ask prices, handling multiple assets and users, etc.
+
+    What's Tested:
+       --------------
+    1. Adding Orders: Tests cover adding orders to an empty book, adding multiple
+    orders for the same or different assets, and adding orders at different prices.
+
+    2. Removing Orders: Tests validate removing recently added orders, handling
+    orders from multiple users, and removing orders from books with a single order.
+
+    3. Best Bid/Ask: These tests check for the highest bid and lowest ask,
+    handling cases with no orders, multiple orders, and after order removals.
+
+    4. User-related Operations: Tests include finding existing and
+    non-existing users, profiling users, and identifying top profiteers and orderers.
+
+    5. Market Orders: Tests validate the listing of all market orders after
+    additions and removals, ensuring the correctness of the order book's state.
+
+    6. Special Cases: Additional tests are conducted for edge cases such as
+    handling orders with the same price but different quantities and various
+    scenarios involving multiple assets.
+
+    7. User Profiles: Tests check functionalities related to user profiles,
+    including the retrieval of top profiteers, orderers, and those with
+    pending orders. This ensures the system accurately tracks user activities.
+
+    8. Complexity Scenarios: Complex test cases involving multiple orders,
+    users, and assets are included to simulate real-world scenarios and ensure
+    the system can handle them efficiently.
+
+      Omissions:
+      ----------
+    - Stress testing with an extremely high volume of orders or users.
+    - Although there are no test cases for the interface, we manually tested it
+     after the interface was usable
+
+
+    Justification for Test Suite:
+    -----------------------------
+    This test suite is designed to ensure thorough validation of the order book
+    system. By covering a broad range of functionalities and scenarios,
+    we tested the system's response to some complex situations.
+    The inclusion of edge cases and user-related operations ensures that the
+    system behaves as expected under different circumstances.
+    These tests provide a strong foundation for asserting the
+    correctness and reliability of the order book system, which makes it effective
+    for any future maintenence or additions.
+
+    Conclusion:
+    -----------
+    The test suite aims to cover a wide range of scenarios,
+    balancing the complexity of a real order book with practical limitations.
+    It is a key part of ensuring the quality and reliability of the order book
+    system. Using these tests we wereable to go back and improve functionality
+    multiple times.
+*)
+
 let string_of_order order =
   Printf.sprintf "Order(type: %s, asset: %s, price: %d, quantity: %d, user: %s)"
     (match order.o_type with B -> "Buy" | S -> "Sell")
