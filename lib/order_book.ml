@@ -29,17 +29,150 @@ type users = user StringMap.t
 
 
 
-let get_profit = failwith "Unimplemented"
+let get_profit users un = 
+  let u = StringMap.find un users in u.profit
 
-let get_loss = failwith "Unimplemented"
+let get_loss users un = 
+  let u = StringMap.find un users in (- u.profit)
+
+
+let get_top_profiter users =
+  let users = StringMap.bindings users in
+  let rec get_top_aux lst =
+    match lst with
+    | [] -> failwith "No Users"
+    | (un, b) :: [] -> (un, b.profit)
+    | (un, b) :: t -> 
+      let u2, p2 = get_top_aux t in 
+      if b.profit > p2 then (un, b.profit) else (u2, p2)
+    in get_top_aux users
+
+let get_top_3_profiters users1 =
+  let ((u1, _) as us1) = get_top_profiter users1 in
+    let users2 = StringMap.remove u1 users1 in
+      let ((u2, _) as us2) = get_top_profiter users2 in 
+        let users3 = StringMap.remove u2 users2 in
+          let us3 = get_top_profiter users3 in
+            [us1; us2; us3]
+
+let get_top_loss users =
+  let users = StringMap.bindings users in
+  let rec get_top_aux lst =
+    match lst with
+    | [] -> failwith "No Users"
+    | (un, b) :: [] -> (un, b.profit)
+    | (un, b) :: t -> 
+      let u2, p2 = get_top_aux t in 
+      if b.profit < p2 then (un, b.profit) else (u2, p2)
+    in get_top_aux users
+
+let get_top_3_loss users1 =
+  let ((u1, _) as us1) = get_top_loss users1 in
+    let users2 = StringMap.remove u1 users1 in
+      let ((u2, _) as us2) = get_top_loss users2 in 
+        let users3 = StringMap.remove u2 users2 in
+          let us3 = get_top_loss users3 in
+            [us1; us2; us3]
+
+let get_top_orderer users =
+  let users = StringMap.bindings users in
+  let rec get_top_aux lst =
+    match lst with
+    | [] -> failwith "No Users"
+    | (un, b) :: [] -> (un, List.length (StringMap.bindings b.order_history))
+    | (un, b) :: t -> 
+      let u2, p2 = get_top_aux t in 
+        if (List.length (StringMap.bindings b.order_history)) > p2 
+          then (un, ((List.length (StringMap.bindings b.order_history)))) 
+          else (u2, p2)
+    in get_top_aux users
+
+let get_top_3_orderers users1 =
+  let ((u1, _) as us1) = get_top_orderer users1 in
+    let users2 = StringMap.remove u1 users1 in
+      let ((u2, _) as us2) = get_top_orderer users2 in 
+        let users3 = StringMap.remove u2 users2 in
+          let us3 = get_top_orderer users3 in
+            [us1; us2; us3]
+
+let get_bottom_orderer users =
+  let users = StringMap.bindings users in
+  let rec get_top_aux lst =
+    match lst with
+    | [] -> failwith "No Users"
+    | (un, b) :: [] -> (un, List.length (StringMap.bindings b.order_history))
+    | (un, b) :: t -> 
+      let u2, p2 = get_top_aux t in 
+        if (List.length (StringMap.bindings b.order_history)) < p2 
+          then (un, ((List.length (StringMap.bindings b.order_history)))) 
+          else (u2, p2)
+    in get_top_aux users
+
+let get_bottom_3_orderers users1 =
+  let ((u1, _) as us1) = get_bottom_orderer users1 in
+    let users2 = StringMap.remove u1 users1 in
+      let ((u2, _) as us2) = get_bottom_orderer users2 in 
+        let users3 = StringMap.remove u2 users2 in
+          let us3 = get_bottom_orderer users3 in
+            [us1; us2; us3]
+
+let get_most_pending_orders users =
+  let users = StringMap.bindings users in
+  let rec get_top_aux lst =
+    match lst with
+    | [] -> failwith "No Users"
+    | (un, b) :: [] -> (un, List.length (StringMap.bindings b.pending_orders))
+    | (un, b) :: t -> 
+      let u2, p2 = get_top_aux t in 
+        if (List.length (StringMap.bindings b.pending_orders)) > p2 
+          then (un, ((List.length (StringMap.bindings b.pending_orders)))) 
+          else (u2, p2)
+    in get_top_aux users
+
+let get_top_3_nr_pending_orders users1 =
+  let ((u1, _) as us1) = get_most_pending_orders users1 in
+    let users2 = StringMap.remove u1 users1 in
+      let ((u2, _) as us2) = get_most_pending_orders users2 in 
+        let users3 = StringMap.remove u2 users2 in
+          let us3 = get_most_pending_orders users3 in
+            [us1; us2; us3]
+
+
+let get_least_pending_orders users =
+  let users = StringMap.bindings users in
+  let rec get_top_aux lst =
+    match lst with
+    | [] -> failwith "No Users"
+    | (un, b) :: [] -> (un, List.length (StringMap.bindings b.pending_orders))
+    | (un, b) :: t -> 
+      let u2, p2 = get_top_aux t in 
+        if (List.length (StringMap.bindings b.pending_orders)) < p2 
+          then (un, ((List.length (StringMap.bindings b.pending_orders)))) 
+          else (u2, p2)
+    in get_top_aux users
+
+let get_bottom_3_nr_pending_orders users1 =
+  let ((u1, _) as us1) = get_least_pending_orders users1 in
+    let users2 = StringMap.remove u1 users1 in
+      let ((u2, _) as us2) = get_least_pending_orders users2 in 
+        let users3 = StringMap.remove u2 users2 in
+          let us3 = get_least_pending_orders users3 in
+            [us1; us2; us3]
 
 let print_asset_book = failwith "Unimplemented"
 
 let print_market_book = failwith "Unimplemented"
 
-let orderbook_to_list = failwith "Unimplemented"
+let orderbook_to_list book asset typ = 
+  let o = StringMap.find asset book in
+  match typ with
+  | B -> o.buy
+  | S -> o.sell
 
-let marketorders_to_list = failwith "Unimplemented"
+let marketorders_to_list book = 
+  let fold_func s f =
+    f.buy @ f.sell @ s 
+  in List.fold_left fold_func [] (List.map (fun (_, x) -> x) (StringMap.bindings book))
 
 
 let best_bid asset_map asset_name =

@@ -49,7 +49,7 @@ val get_profit : users -> string -> int
 val get_loss : users -> string -> int
 (** Gets the loss made from the trades of a signle user *)
 
-val orderbook_to_list : t -> asset -> string -> order list
+val orderbook_to_list : t -> asset -> o_type -> order list
 (** Returns the list representation of all orders of a single asset. *)
 
 val marketorders_to_list : t -> order list
@@ -66,3 +66,27 @@ val find_user : string -> users -> user option
 
 val print_profile : user -> unit
 (** Prints a users profile *)
+
+val get_top_profiter : users -> (string * int)
+
+val get_top_3_profiters: users -> (string * int) list
+
+val get_top_loss : users -> (string * int)
+
+val get_top_3_loss: users -> (string * int) list
+
+val get_top_orderer : users -> (string * int)
+
+val get_top_3_orderers: users -> (string * int) list
+
+val get_bottom_orderer : users -> (string * int)
+
+val get_bottom_3_orderers: users -> (string * int) list
+
+val get_most_pending_orders : users -> (string * int)
+
+val get_top_3_nr_pending_orders : users -> (string * int) list
+
+val get_least_pending_orders : users -> (string * int)
+
+val get_bottom_3_nr_pending_orders : users -> (string * int) list
