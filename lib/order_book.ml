@@ -252,15 +252,38 @@ let rec add_order book users order =
   match (bb, ba) with
   | None, _ | _, None -> (new_book, new_users)
   | Some bb, Some ba ->
-      if bb.price > ba.price then
-        let b1, u1 =
-          ( remove_from_book new_book order,
+      if (bb.price > ba.price) && (bb.user <> ba.user) then
+
+        if bb.quantity = ba.quantity then
+          let b1, u1 =
+            ( remove_from_book new_book bb,
+              remove_from_user_pending new_users bb )
+          in
+          let b2, u2 =
+            (remove_from_book b1 ba, remove_from_user_pending u1 ba)
+          in
+          (b2, add_profit (add_profit u2 bb.user ~-(bb.price * ba.quantity)) ba.user (ba.price * ba.quantity))
+        else if bb.quantity > ba.quantity then
+          let qdiff = bb.quantity - ba.quantity in
+          let b1, u1 =
+            ( modify_book_order new_book bb bb.o_type bb.asset bb.price (bb.quantity - qdiff),
+              modify_user_pending_orders new_users bb bb.o_type bb.asset bb.price (bb.quantity - qdiff) )
+          in
+          let b2, u2 =
+            (remove_from_book b1 ba, remove_from_user_pending u1 ba)
+          in
+          (b2, add_profit (add_profit u2 bb.user ~-(bb.price * qdiff)) ba.user (ba.price * qdiff))
+        else
+          let qdiff = ba.quantity - bb.quantity in
+          let b1, u1 =
+            ( remove_from_book new_book bb,
             remove_from_user_pending new_users bb )
-        in
-        let b2, u2 =
-          (remove_from_book b1 order, remove_from_user_pending u1 bb)
-        in
-        (b2, add_profit (add_profit u2 bb.user ~-(bb.price)) ba.user ba.price)
+          in
+          let b2, u2 =
+            ( modify_book_order b1 ba ba.o_type ba.asset ba.price (ba.quantity - qdiff),
+            modify_user_pending_orders u1 ba ba.o_type ba.asset ba.price (ba.quantity - qdiff) )
+          in
+          (b2, add_profit (add_profit u2 bb.user ~-(bb.price * qdiff)) ba.user (ba.price * qdiff))
       else (new_book, new_users)
 
 and add_to_book book order =
@@ -269,11 +292,11 @@ and add_to_book book order =
       match order.o_type with
       | B ->
           StringMap.add order.asset
-            { buy = sort_book (order :: buy); sell }
+            { buy = sort_book (order :: buy) |> List.rev; sell }
             book
       | S ->
           StringMap.add order.asset
-            { buy; sell = List.rev (sort_book (order :: sell)) }
+            { buy; sell = sort_book (order :: sell) }
             book)
   | None -> (
       match order.o_type with
@@ -302,6 +325,29 @@ and add_profit users un v =
   let u = StringMap.find un users in
   let new_u = { u with profit = u.profit + v } in
   StringMap.add un new_u users
+
+and modify_book_order book order ntyp na np nq =
+  let x = StringMap.find_opt order.asset book in
+  match x with
+  | Some {buy; sell} -> StringMap.add order.asset (
+    match order.o_type with
+    | B -> {buy=(modify_order_in_list buy order ntyp na np nq); sell}
+    | S -> {buy; sell=(modify_order_in_list sell order ntyp na np nq)}
+  ) book
+  | None -> book
+
+and modify_order_in_list lst order ntyp na np nq =
+match lst with
+| [] -> []
+| h :: t -> if h = order then {order with o_type = ntyp; asset=na; price=np; quantity=nq} :: t else h :: modify_order_in_list t order ntyp na np nq
+
+and modify_user_pending_orders users order ntyp na np nq =
+  let u = StringMap.find_opt order.user users in
+  match u with
+  | Some x -> StringMap.add order.user (
+    {x with pending_orders=(modify_book_order x.pending_orders order ntyp na np nq)}
+  ) users
+  | None -> users
 
 (**let to_list book = book *)
 let string_order_type ot = match ot with B -> "Buy" | S -> "Sell"
