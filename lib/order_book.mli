@@ -1,6 +1,7 @@
-type o_type =
-  | B
-  | S  (** Type represensting if the order is being bought or sold. *)
+(** Module representing an order book and its users. *)
+
+type o_type = B | S  
+(** Type represensting if the order is being bought or sold. *)
 
 type asset = string
 (** Type representing what the asset in the order is. *)
@@ -32,37 +33,47 @@ val empty : t * users
 (** Creates an empty order book. *)
 
 val add_order : t -> users -> order -> t * users
-(** Adds an order to an order book. *)
+(** Given an order book [book], a set of users [u], and an order [o], 
+    adds [o] to [book] and [o] to the order history and pending orders
+    of the user that submitted [o]. Matches the order in the book if a 
+    valid match exists. *)
 
 val remove_order : t -> users -> order -> t * users
-(** Removes an order to an order book. *)
+(** Given an order book [book], a set of users [u], and an order [o], 
+    removes [o] from [book] and [o] from the user's history who
+    submitted [o]. *)
 
 val best_bid : t -> asset -> order option
-(** Get the best bid order from the book. *)
+(** Given an order book [book] and asset [a], get the best bid 
+    for asset [a] in [book]. *)
 
 val best_ask : t -> asset -> order option
-(** Get the best ask order from the book. *)
+(** Given an order book [book] and asset [a], get the best ask 
+    for asset [a] in [book]. *)
 
 val get_profit : users -> string -> int
-(** Gets the profit made from the trades of a single user. *)
+(** Given users [u] and username [name], get the profit made by [name]. *)
 
 val get_loss : users -> string -> int
-(** Gets the loss made from the trades of a signle user *)
+(** Given users [u] and username [name], get the loss made by [name]. *)
 
-val orderbook_to_list : t -> string -> o_type -> order list
-(** Returns the list representation of all orders of a single asset. *)
+val orderbook_to_list : t -> asset -> o_type -> order list
+(** Given order book [book], asset [a], and order type [typ],
+    Returns the list representation of all [typ] orders of a [a]. *)
 
 val marketorders_to_list : t -> order list
-(** Returns the list representation of all orders on the market. *)
+(** Returns the list representation of all orders on the market book [book]. *)
 
 val print_market_book : t -> unit
-(** Prints the order book. *)
+(** Prints the order book [book]. *)
 
 val asset_book_to_string : t -> asset -> string -> string
-(** Prints a single assets order book. *)
+(** Given order book [book], asset [a], and order type [typ], return a
+    string representation of the list of orders from [a] of type [typ]. *)
 
 val find_user : string -> users -> user option
-(** Returns a speicifc users orders*)
+(** Given username [un] and users [u], return the user profile of [un].
+    If they don't exist, return None. *)
 
 val print_profile : user -> unit
 (** Prints a users profile *)

@@ -1,2 +1,4 @@
 (library
- (name order_book))
+ (name order_book)
+ (public_name order_book)
+ (libraries str))

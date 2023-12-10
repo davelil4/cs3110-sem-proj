@@ -26,3 +26,6 @@ doc:
 clean:
 	dune clean
 	rm -f order_book.zip
+
+opendoc: doc
+	@bash opendoc.sh
