@@ -7,10 +7,10 @@ type asset = string
 
 type order = {
   o_type : o_type;
-  asset : string;
+  asset : asset;
   price : int;
   quantity : int;
-  user : string;
+  user : asset;
 }
 (** Type representing a single order. *)
 
@@ -37,10 +37,10 @@ val add_order : t -> users -> order -> t * users
 val remove_order : t -> users -> order -> t * users
 (** Removes an order to an order book. *)
 
-val best_bid : t -> string -> order option
+val best_bid : t -> asset -> order option
 (** Get the best bid order from the book. *)
 
-val best_ask : t -> string -> order option
+val best_ask : t -> asset -> order option
 (** Get the best ask order from the book. *)
 
 val get_profit : users -> string -> int
@@ -58,7 +58,7 @@ val marketorders_to_list : t -> order list
 val print_market_book : t -> unit
 (** Prints the order book. *)
 
-val asset_book_to_string : t -> string -> string -> string
+val asset_book_to_string : t -> asset -> string -> string
 (** Prints a single assets order book. *)
 
 val find_user : string -> users -> user option
@@ -68,17 +68,51 @@ val print_profile : user -> unit
 (** Prints a users profile *)
 
 val get_top_profiter : users -> string * int
+(**Returns a tuple containing the higher profiter's username and profit*)
+
 val get_top_3_profiters : users -> (string * int) list
+(** Returns a tuple containing the username and profit of for each of
+    the three highest profiters*)
+
 val get_top_loss : users -> string * int
+(** Returns a tuple containing the username and loss of the user
+with the largest loss*)
+
 val get_top_3_loss : users -> (string * int) list
+(** Returns a tuple containing the username and profit of for each of
+    the three highest losers*)
+
 val get_top_orderer : users -> string * int
+(** Returns a tuple containing the username and loss of the user
+with the most orders*)
+
 val get_top_3_orderers : users -> (string * int) list
+(** Returns a tuple containing the username and profit of for each of
+    the three highest orderers*)
+
 val get_bottom_orderer : users -> string * int
+(** Returns a tuple containing the username and loss of the user
+with the least orders*)
+
 val get_bottom_3_orderers : users -> (string * int) list
+(** Returns a tuple containing the username and profit of for each of
+    the three lowest orderers*)
+
 val get_most_pending_orders : users -> string * int
+(** Returns a tuple containing the username and loss of the user
+with the most orders*)
+
 val get_top_3_nr_pending_orders : users -> (string * int) list
+(** Returns a tuple containing the username and profit of for each of
+    the three highest pending orders*)
+
 val get_least_pending_orders : users -> string * int
+(** Returns a tuple containing the username and loss of the user
+with the least orders*)
+
 val get_bottom_3_nr_pending_orders : users -> (string * int) list
+(** Returns a tuple containing the username and profit of for each of
+    the three least pending orders*)
 
 val t_to_string : t -> string
 (**Converts an orderbook of type t to a string representation*)
