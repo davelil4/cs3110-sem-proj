@@ -12,7 +12,13 @@ let rec main_loop (book : t * users) : unit =
   let current_users = snd book in
   let user_profile =
     match find_user name current_users with
-    | None -> raise (Invalid_argument "Invalid Username")
+    | None ->
+        {
+          username = "string";
+          order_history = fst empty;
+          pending_orders = fst empty;
+          profit = 0;
+        }
     | Some u -> u
   in
   print_endline "1. Add Order";
@@ -43,9 +49,9 @@ let rec main_loop (book : t * users) : unit =
       let asset1 = read_line () in
       let user1 = name in
       print_string "Enter Price: ";
+      let inp1 = int_of_string (read_line ()) in
       let price1 =
-        if int_of_string (read_line ()) >= 0 then int_of_string (read_line ())
-        else raise (Invalid_argument "Negative Price")
+        if inp1 >= 0 then inp1 else raise (Invalid_argument "Negative Price")
       in
       print_string "Enter Quantity: ";
       let quantity1 =

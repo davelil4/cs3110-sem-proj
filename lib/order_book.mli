@@ -7,7 +7,7 @@ type asset = string
 
 type order = {
   o_type : o_type;
-  asset : asset;
+  asset : string;
   price : int;
   quantity : int;
   user : string;
@@ -37,10 +37,10 @@ val add_order : t -> users -> order -> t * users
 val remove_order : t -> users -> order -> t * users
 (** Removes an order to an order book. *)
 
-val best_bid : t -> asset -> order option
+val best_bid : t -> string -> order option
 (** Get the best bid order from the book. *)
 
-val best_ask : t -> asset -> order option
+val best_ask : t -> string -> order option
 (** Get the best ask order from the book. *)
 
 val get_profit : users -> string -> int
@@ -49,7 +49,7 @@ val get_profit : users -> string -> int
 val get_loss : users -> string -> int
 (** Gets the loss made from the trades of a signle user *)
 
-val orderbook_to_list : t -> asset -> o_type -> order list
+val orderbook_to_list : t -> string -> o_type -> order list
 (** Returns the list representation of all orders of a single asset. *)
 
 val marketorders_to_list : t -> order list
@@ -58,7 +58,7 @@ val marketorders_to_list : t -> order list
 val print_market_book : t -> unit
 (** Prints the order book. *)
 
-val asset_book_to_string : t -> asset -> string -> string
+val asset_book_to_string : t -> string -> string -> string
 (** Prints a single assets order book. *)
 
 val find_user : string -> users -> user option

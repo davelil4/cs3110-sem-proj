@@ -153,6 +153,8 @@ let get_least_pending_orders users =
   in
   get_top_aux users
 
+(**let print_asset_book = failwith "Unimplemented" *)
+
 let get_bottom_3_nr_pending_orders users1 =
   let ((u1, _) as us1) = get_least_pending_orders users1 in
   let users2 = StringMap.remove u1 users1 in
@@ -160,9 +162,6 @@ let get_bottom_3_nr_pending_orders users1 =
   let users3 = StringMap.remove u2 users2 in
   let us3 = get_least_pending_orders users3 in
   [ us1; us2; us3 ]
-
-let print_asset_book = failwith "Unimplemented"
-let print_market_book = failwith "Unimplemented"
 
 let orderbook_to_list book asset typ =
   let o = StringMap.find asset book in
@@ -179,14 +178,16 @@ let best_bid asset_map asset_name =
   (*Assume b is sorted *)
   | Some { buy; _ } -> ( match buy with h :: _ -> Some h | _ -> None)
 
+(**
 let rec find_last lis =
-  match lis with [] -> None | [ a ] -> Some a | h :: t -> find_last t
+  match lis with [] -> None | [ a ] -> Some a | _ :: t -> find_last t *)
 
+(**
 let lowest_bid asset_map asset_name =
   match StringMap.find_opt asset_name asset_map with
   | None -> None
   (*Assume b is sorted *)
-  | Some { buy; _ } -> find_last buy
+  | Some { buy; _ } -> find_last buy *)
 
 let best_ask asset_map asset_name =
   match StringMap.find_opt asset_name asset_map with
@@ -194,11 +195,12 @@ let best_ask asset_map asset_name =
   (*Assume s is sorted *)
   | Some { buy = _; sell } -> ( match sell with h :: _ -> Some h | _ -> None)
 
+(**
 let worst_ask asset_map asset_name =
   match StringMap.find_opt asset_name asset_map with
   | None -> None
   (*Assume b is sorted *)
-  | Some { buy = _; sell } -> find_last sell
+  | Some { buy = _; sell } -> find_last sell *)
 
 let rec sort_book b = List.sort compare_order_asc b
 and compare_order_asc o1 o2 = compare o1.price o2.price
@@ -301,17 +303,19 @@ and add_profit users un v =
   let new_u = { u with profit = u.profit + v } in
   StringMap.add un new_u users
 
-let to_list book = book
+(**let to_list book = book *)
 let string_order_type ot = match ot with B -> "Buy" | S -> "Sell"
 
 let find_user user users =
   match StringMap.find_opt user users with None -> None | Some u -> Some u
 
+(**
 let print_order o =
   Printf.printf
     "\n Order Type: %s, \nAsset: %s, \nPrice: %d, \nQuantity: %d, \nUser: %s\n"
     (string_order_type o.o_type)
     o.asset o.price o.quantity o.user
+*)
 
 let rec orderlist_to_string ol =
   let single_order_to_string o =
@@ -340,7 +344,7 @@ let rec t_list_to_string t_list =
       ^ orderlist_to_string sells ^ "]; " ^ t_list_to_string tail
 
 (**Converts an orderbook of type t to a string representation*)
-let rec t_to_string t =
+let t_to_string t =
   let t_list = StringMap.bindings t in
   t_list_to_string t_list
 
@@ -360,7 +364,7 @@ let rec public_user_list_string user_list =
   | [ (k, _) ] -> k
   | (k, _) :: t -> k ^ public_user_list_string t
 
-let rec users_to_string user_map =
+let users_to_string user_map =
   let userlist = StringMap.bindings user_map in
   public_user_list_string userlist
 
@@ -399,3 +403,5 @@ let order_to_string o =
   "{Order Type: " ^ string_order_type o.o_type ^ "; Asset: " ^ o.asset
   ^ "Price: " ^ string_of_int o.price ^ "Quantity: " ^ string_of_int o.quantity
   ^ "User: " ^ o.user
+
+let print_market_book e = print_endline (t_to_string e)
